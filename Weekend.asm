@@ -1,0 +1,104 @@
+DATA SEGMENT 
+	BUF DB 4, ?
+	DB 4 DUP(?)
+
+	TIT DB "Press input Number(1-7) :",  '$'
+	DAY1 DB "	Monday		" , 0DH, 0AH, '$'
+	DAY2 DB "	Tuesday		" , 0DH, 0AH, '$'
+	DAY3 DB "	Wednesday	" , 0DH, 0AH, '$'
+	DAY4 DB "	Thursday	" , 0DH, 0AH, '$'
+	DAY5 DB "	Friday		" , 0DH, 0AH, '$'
+	DAY6 DB "	Saturday	" , 0DH, 0AH, '$'
+	DAY7 DB "	Sunday		" , 0DH, 0AH, '$'
+	TITERROR DB 0DH, 0AH, "Input error, please re-enter! --**--**--**--**-->", 0DH, 0AH, '$'
+	GOODBYE DB 0DH, 0AH, "	Goodbye	!	" , 0DH, 0AH, '$'
+DATA ENDS
+
+STACKS SEGMENT STACK
+    DB  100 DUP(?)
+STACKS ENDS
+
+CODE SEGMENT
+    ASSUME  CS:CODE, DS:DATA, SS:STACKS
+	ORG 0108H
+
+START:  MOV AX, DATA
+        MOV DS, AX
+
+;09H----输出字符串
+  BEGIN:MOV DX, OFFSET TIT
+		MOV AH, 09H
+		INT 21H		
+		
+;01H----读入并回显
+		MOV DX, OFFSET BUF
+		MOV AH, 01H			;放在AL中
+		INT 21H
+;JZ----相等
+;JA----大于
+;JB----小于
+;JMP----无条件跳转
+		CMP AL, '1'
+		JB ERROR
+		CMP AL, '1'
+		JZ D1
+		CMP AL, '2'
+		JZ D2
+		CMP AL, '3'
+		JZ D3
+		CMP AL, '4'
+		JZ D4
+		CMP AL, '5'
+		JZ D5
+		CMP AL, '6'
+		JZ D6
+		CMP AL, '7'
+		JZ D7
+		CMP AL, 'q'
+		JZ OVER
+		CMP AL, '7'
+		JA ERROR
+
+	D1: MOV DX, OFFSET DAY1
+		MOV AH, 09H
+		INT 21H
+		JMP BEGIN	
+	D2: MOV DX, OFFSET DAY2
+		MOV AH, 09H
+		INT 21H
+		JMP BEGIN	
+	D3: MOV DX, OFFSET DAY3
+		MOV AH, 09H
+		INT 21H
+		JMP BEGIN	
+	D4: MOV DX, OFFSET DAY4
+		MOV AH, 09H
+		INT 21H
+		JMP BEGIN	
+	D5: MOV DX, OFFSET DAY5
+		MOV AH, 09H
+		INT 21H
+		JMP BEGIN	
+	D6: MOV DX, OFFSET DAY6
+		MOV AH, 09H
+		INT 21H
+		JMP BEGIN	
+	D7: MOV DX, OFFSET DAY7
+		MOV AH, 09H
+		INT 21H
+		JMP BEGIN	
+ERROR:  MOV DX, OFFSET TITERROR
+		MOV AH, 09H
+		INT 21H
+		JMP BEGIN
+
+OVER:   MOV DX, OFFSET GOODBYE
+		MOV AH, 09H
+		INT 21H
+		MOV AH, 4CH
+		INT 21H
+
+
+CODE ENDS
+        END START
+
